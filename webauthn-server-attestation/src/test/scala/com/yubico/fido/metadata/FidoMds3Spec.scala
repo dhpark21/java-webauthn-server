@@ -1037,4 +1037,88 @@ class FidoMds3Spec extends AnyFunSpec with Matchers {
 
   }
 
+  describe("The notRetired filter") {
+    val attestationRoot = TestAuthenticator.generateAttestationCaCertificate()
+    val rootCertBase64 = new ByteArray(attestationRoot._1.getEncoded).getBase64
+
+    val (goodCert, _) = TestAuthenticator.generateAttestationCertificate(
+      name = new X500Name("CN=Good cert"),
+      caCertAndKey = Some(attestationRoot),
+    )
+
+    val goodCertKeyIdentifier = new ByteArray(
+      CertificateParser.computeSubjectKeyIdentifier(goodCert)
+    ).getHex
+
+    val aaguidRetired =
+      new AAGUID(ByteArray.fromHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
+
+    val blob: MetadataBLOBPayload =
+      JacksonCodecs.jsonWithDefaultEnums.readValue(
+        s"""{
+        "legalHeader" : "Kom ihåg att du aldrig får snyta dig i mattan!",
+        "nextUpdate" : "2022-12-01",
+        "no" : 0,
+        "entries": [
+          {
+            "aaguid": "${aaguidRetired.asGuidString()}",
+            "attestationCertificateKeyIdentifiers": ["${goodCertKeyIdentifier}"],
+            "metadataStatement": {
+              "aaguid": "${aaguidRetired.asGuidString()}",
+              "attestationCertificateKeyIdentifiers": ["${goodCertKeyIdentifier}"],
+              "authenticatorVersion": 1,
+              "attachmentHint" : ["internal"],
+              "attestationRootCertificates": ["${rootCertBase64}"],
+              "attestationTypes" : ["basic_full"],
+              "authenticationAlgorithms" : ["secp256r1_ecdsa_sha256_raw"],
+              "description" : "Test authenticator",
+              "keyProtection" : ["software"],
+              "matcherProtection" : ["software"],
+              "protocolFamily" : "u2f",
+              "publicKeyAlgAndEncodings" : ["ecc_x962_raw"],
+              "schema" : 3,
+              "tcDisplay" : [],
+              "upv" : [{ "major" : 1, "minor" : 1 }],
+              "userVerificationDetails" : [[{ "userVerificationMethod" : "presence_internal" }]]
+            },
+           "statusReports": [
+              { "status": "RETIRED", "effectiveDate": "2022-02-01" }
+            ],
+            "timeOfLastStatusChange": "2022-02-15"
+          }
+        ]
+      }""".stripMargin,
+        classOf[MetadataBLOBPayload],
+      )
+
+    it("is not enabled by default.") {
+      val mds = FidoMetadataService.builder().useBlob(blob).build()
+
+      mds
+        .findTrustRoots(
+          List(goodCert).asJava,
+          Some(aaguidRetired.asBytes).toJava,
+        )
+        .getTrustRoots
+        .asScala should not be empty
+    }
+
+    it("can be enabled explicitly as a prefilter.") {
+      val mds = FidoMetadataService
+        .builder()
+        .useBlob(blob)
+        .prefilter(FidoMetadataService.Filters.notRetired())
+        .build()
+
+      mds
+        .findTrustRoots(
+          List(goodCert).asJava,
+          Some(aaguidRetired.asBytes).toJava,
+        )
+        .getTrustRoots
+        .asScala shouldBe empty
+    }
+
+  }
+
 }

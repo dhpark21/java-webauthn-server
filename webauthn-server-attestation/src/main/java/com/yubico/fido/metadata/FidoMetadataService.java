@@ -263,8 +263,10 @@ public final class FidoMetadataService implements AttestationTrustSource {
      *
      * <p>The default is {@link Filters#notRevoked() Filters.notRevoked()}. Setting a different
      * filter overrides this default; to preserve the "not revoked" condition in addition to the new
-     * filter, you must explicitly include the condition in the few filter. For example, by using
-     * {@link Filters#allOf(Predicate[]) Filters.allOf(Predicate...)}.
+     * filter, you must explicitly include the condition in the new filter, for example by using
+     * {@link Filters#allOf(Predicate[]) Filters.allOf(Predicate...)}. To add the {@link
+     * Filters#notRetired() Filters.notRetired()} filter, use: <code>
+     * .prefilter(Filters.allOf(Filters.notRevoked(), Filters.notRetired()))</code>.
      *
      * @param prefilter a {@link Predicate} which returns <code>true</code> for metadata entries to
      *     include in the data source.
@@ -376,6 +378,20 @@ public final class FidoMetadataService implements AttestationTrustSource {
           entry.getStatusReports().stream()
               .noneMatch(
                   statusReport -> AuthenticatorStatus.REVOKED.equals(statusReport.getStatus()));
+    }
+
+    /**
+     * Include any metadata entry whose {@link MetadataBLOBPayloadEntry#getStatusReports()
+     * statusReports} array contains no entry with {@link AuthenticatorStatus#RETIRED RETIRED}
+     * status.
+     *
+     * @see AuthenticatorStatus#RETIRED
+     */
+    public static Predicate<MetadataBLOBPayloadEntry> notRetired() {
+      return (entry) ->
+          entry.getStatusReports().stream()
+              .noneMatch(
+                  statusReport -> AuthenticatorStatus.RETIRED.equals(statusReport.getStatus()));
     }
 
     /**

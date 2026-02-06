@@ -562,6 +562,54 @@ class FidoMds3Spec extends AnyFunSpec with Matchers {
     }
   }
 
+  it("RETIRED AuthenticatorStatus is parsed correctly.") {
+    val (blobJwt, cert, crls) = makeBlob("""{
+        "legalHeader" : "Kom ihåg att du aldrig får snyta dig i mattan!",
+        "nextUpdate" : "2022-12-01",
+        "no" : 0,
+        "entries": [
+          {
+            "aaguid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "statusReports": [
+              {
+                "status": "RETIRED",
+                "effectiveDate": "2022-02-15"
+              }
+            ],
+            "timeOfLastStatusChange": "2022-02-15"
+          }
+        ]
+      }""")
+    val downloader: FidoMetadataDownloader = FidoMetadataDownloader
+      .builder()
+      .expectLegalHeader("Kom ihåg att du aldrig får snyta dig i mattan!")
+      .useTrustRoot(cert)
+      .useBlob(blobJwt)
+      .clock(
+        Clock.fixed(Instant.parse("2022-02-15T18:00:00Z"), ZoneOffset.UTC)
+      )
+      .useCrls(crls)
+      .build()
+    val mds =
+      FidoMetadataService.builder().useBlob(downloader.loadCachedBlob()).build()
+    mds should not be null
+
+    val entries = mds
+      .findEntries(
+        Collections.emptyList(),
+        Some(
+          new AAGUID(ByteArray.fromHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
+        ).toJava,
+      )
+      .asScala
+    entries should not be empty
+    entries should have size 1
+    entries.head.getStatusReports should have size 1
+    entries.head.getStatusReports.get(0).getStatus should be(
+      AuthenticatorStatus.RETIRED
+    )
+  }
+
   it("More [AuthenticatorTransport] values might be added in the future. FIDO Servers MUST silently ignore all unknown AuthenticatorStatus values.") {
     val (blobJwt, cert, crls) = makeBlob("""{
         "legalHeader" : "Kom ihåg att du aldrig får snyta dig i mattan!",

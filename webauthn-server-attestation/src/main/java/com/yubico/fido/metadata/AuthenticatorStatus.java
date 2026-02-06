@@ -100,6 +100,18 @@ public enum AuthenticatorStatus {
   UPDATE_AVAILABLE(0),
 
   /**
+   * The authenticator vendor has decided to retire the product, that this authenticator should not
+   * be accepted any longer. For example if a prototype version of the authenticator was added to
+   * FIDO MDS and has now been superseded by the final product, the entry for the prototype might be
+   * set to "retired".
+   *
+   * @see <a
+   *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.1.1-rd-20251016.html#enumdef-authenticatorstatus">FIDO
+   *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
+   */
+  RETIRED(0),
+
+  /**
    * The FIDO Alliance has determined that this authenticator should not be trusted for any reason.
    * For example if it is known to be a fraudulent product or contain a deliberate backdoor. Relying
    * parties SHOULD reject any future registration of this authenticator model.

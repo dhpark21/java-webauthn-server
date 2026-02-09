@@ -1041,6 +1041,9 @@ class FidoMds3Spec extends AnyFunSpec with Matchers {
     val aaguidRetired =
       new AAGUID(ByteArray.fromHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
 
+    val aaguidNotRetired =
+      new AAGUID(ByteArray.fromHex("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"))
+
     val blob: MetadataBLOBPayload =
       JacksonCodecs.jsonWithDefaultEnums.readValue(
         s"""{
@@ -1070,6 +1073,27 @@ class FidoMds3Spec extends AnyFunSpec with Matchers {
               { "status": "RETIRED", "effectiveDate": "2022-02-01" }
             ],
             "timeOfLastStatusChange": "2022-02-15"
+          },
+          {
+            "aaguid": "${aaguidNotRetired.asGuidString()}",
+            "attestationCertificateKeyIdentifiers": [],
+            "metadataStatement": {
+              "aaguid": "${aaguidNotRetired.asGuidString()}",
+              "authenticatorVersion": 1,
+              "attestationRootCertificates": [],
+              "attestationTypes" : ["basic_full"],
+              "authenticationAlgorithms" : ["secp256r1_ecdsa_sha256_raw"],
+              "keyProtection" : ["software"],
+              "matcherProtection" : ["software"],
+              "protocolFamily" : "u2f",
+              "publicKeyAlgAndEncodings" : ["ecc_x962_raw"],
+              "schema" : 3,
+              "tcDisplay" : [],
+              "upv" : [{ "major" : 1, "minor" : 1 }],
+              "userVerificationDetails" : [[{ "userVerificationMethod" : "presence_internal" }]]
+            },
+           "statusReports": [],
+            "timeOfLastStatusChange": "2022-02-15"
           }
         ]
       }""".stripMargin,
@@ -1081,6 +1105,9 @@ class FidoMds3Spec extends AnyFunSpec with Matchers {
 
       mds
         .findEntries(aaguidRetired)
+        .asScala should not be empty
+      mds
+        .findEntries(aaguidNotRetired)
         .asScala should not be empty
     }
 
@@ -1094,6 +1121,9 @@ class FidoMds3Spec extends AnyFunSpec with Matchers {
       mds
         .findEntries(aaguidRetired)
         .asScala shouldBe empty
+      mds
+        .findEntries(aaguidNotRetired)
+        .asScala should not be empty
     }
 
   }

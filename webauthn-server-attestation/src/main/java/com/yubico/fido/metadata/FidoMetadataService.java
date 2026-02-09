@@ -385,6 +385,7 @@ public final class FidoMetadataService implements AttestationTrustSource {
      * statusReports} array contains no entry with {@link AuthenticatorStatus#RETIRED RETIRED}
      * status.
      *
+     * @since 2.9.0
      * @see AuthenticatorStatus#RETIRED
      */
     public static Predicate<MetadataBLOBPayloadEntry> notRetired() {

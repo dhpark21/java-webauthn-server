@@ -105,6 +105,7 @@ public enum AuthenticatorStatus {
    * FIDO MDS and has now been superseded by the final product, the entry for the prototype might be
    * set to "retired".
    *
+   * @since 2.9.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.1.1-rd-20251016.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>

@@ -1038,18 +1038,6 @@ class FidoMds3Spec extends AnyFunSpec with Matchers {
   }
 
   describe("The notRetired filter") {
-    val attestationRoot = TestAuthenticator.generateAttestationCaCertificate()
-    val rootCertBase64 = new ByteArray(attestationRoot._1.getEncoded).getBase64
-
-    val (goodCert, _) = TestAuthenticator.generateAttestationCertificate(
-      name = new X500Name("CN=Good cert"),
-      caCertAndKey = Some(attestationRoot),
-    )
-
-    val goodCertKeyIdentifier = new ByteArray(
-      CertificateParser.computeSubjectKeyIdentifier(goodCert)
-    ).getHex
-
     val aaguidRetired =
       new AAGUID(ByteArray.fromHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
 
@@ -1062,16 +1050,13 @@ class FidoMds3Spec extends AnyFunSpec with Matchers {
         "entries": [
           {
             "aaguid": "${aaguidRetired.asGuidString()}",
-            "attestationCertificateKeyIdentifiers": ["${goodCertKeyIdentifier}"],
+            "attestationCertificateKeyIdentifiers": [],
             "metadataStatement": {
               "aaguid": "${aaguidRetired.asGuidString()}",
-              "attestationCertificateKeyIdentifiers": ["${goodCertKeyIdentifier}"],
               "authenticatorVersion": 1,
-              "attachmentHint" : ["internal"],
-              "attestationRootCertificates": ["${rootCertBase64}"],
+              "attestationRootCertificates": [],
               "attestationTypes" : ["basic_full"],
               "authenticationAlgorithms" : ["secp256r1_ecdsa_sha256_raw"],
-              "description" : "Test authenticator",
               "keyProtection" : ["software"],
               "matcherProtection" : ["software"],
               "protocolFamily" : "u2f",
@@ -1095,11 +1080,7 @@ class FidoMds3Spec extends AnyFunSpec with Matchers {
       val mds = FidoMetadataService.builder().useBlob(blob).build()
 
       mds
-        .findTrustRoots(
-          List(goodCert).asJava,
-          Some(aaguidRetired.asBytes).toJava,
-        )
-        .getTrustRoots
+        .findEntries(aaguidRetired)
         .asScala should not be empty
     }
 
@@ -1111,11 +1092,7 @@ class FidoMds3Spec extends AnyFunSpec with Matchers {
         .build()
 
       mds
-        .findTrustRoots(
-          List(goodCert).asJava,
-          Some(aaguidRetired.asBytes).toJava,
-        )
-        .getTrustRoots
+        .findEntries(aaguidRetired)
         .asScala shouldBe empty
     }
 

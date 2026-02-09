@@ -7,18 +7,24 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
  * or attestationCertificateKeyIdentifiers and potentially some additional information (such as a
  * specific attestation key).
  *
+ * @since 2.0.0
  * @see <a
  *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
  *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
  */
 public enum AuthenticatorStatus {
-  /** (NOT DEFINED IN SPEC) Placeholder for any unknown {@link AuthenticatorStatus} value. */
+  /**
+   * (NOT DEFINED IN SPEC) Placeholder for any unknown {@link AuthenticatorStatus} value.
+   *
+   * @since 2.0.0
+   */
   @JsonEnumDefaultValue
   UNKNOWN(0),
 
   /**
    * This authenticator is not FIDO certified.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -29,6 +35,7 @@ public enum AuthenticatorStatus {
    * This authenticator has passed FIDO functional certification. This certification scheme is
    * phased out and will be replaced by {@link #FIDO_CERTIFIED_L1}.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -40,6 +47,7 @@ public enum AuthenticatorStatus {
    * authenticator could be used without the user’s consent and potentially even without the user’s
    * knowledge.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -53,6 +61,7 @@ public enum AuthenticatorStatus {
    * new registrations of the compromised authenticator. The Authenticator manufacturer should set
    * the date to the date when compromise has occurred.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -65,6 +74,7 @@ public enum AuthenticatorStatus {
    * to be generated or side channels that allow keys or signatures to be forged, guessed or
    * extracted.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -75,6 +85,7 @@ public enum AuthenticatorStatus {
    * This authenticator has known weaknesses in its key protection mechanism(s) that allow user keys
    * to be extracted by an adversary in physical possession of the device.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -93,6 +104,7 @@ public enum AuthenticatorStatus {
    * #USER_KEY_PHYSICAL_COMPROMISE}, {@link #REVOKED}. The Relying party MUST reject the Metadata
    * Statement if the authenticatorVersion has not increased
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -117,6 +129,7 @@ public enum AuthenticatorStatus {
    * For example if it is known to be a fraudulent product or contain a deliberate backdoor. Relying
    * parties SHOULD reject any future registration of this authenticator model.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -128,6 +141,7 @@ public enum AuthenticatorStatus {
    * FIDO Alliance. If this completed checklist is publicly available, the URL will be specified in
    * url.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -138,6 +152,7 @@ public enum AuthenticatorStatus {
    * The authenticator has passed FIDO Authenticator certification at level 1. This level is the
    * more strict successor of {@link #FIDO_CERTIFIED}.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -148,6 +163,7 @@ public enum AuthenticatorStatus {
    * The authenticator has passed FIDO Authenticator certification at level 1+. This level is the
    * more than level 1.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -158,6 +174,7 @@ public enum AuthenticatorStatus {
    * The authenticator has passed FIDO Authenticator certification at level 2. This level is more
    * strict than level 1+.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -168,6 +185,7 @@ public enum AuthenticatorStatus {
    * The authenticator has passed FIDO Authenticator certification at level 2+. This level is more
    * strict than level 2.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -178,6 +196,7 @@ public enum AuthenticatorStatus {
    * The authenticator has passed FIDO Authenticator certification at level 3. This level is more
    * strict than level 2+.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>
@@ -188,6 +207,7 @@ public enum AuthenticatorStatus {
    * The authenticator has passed FIDO Authenticator certification at level 3+. This level is more
    * strict than level 3.
    *
+   * @since 2.0.0
    * @see <a
    *     href="https://fidoalliance.org/specs/mds/fido-metadata-service-v3.0-ps-20210518.html#enumdef-authenticatorstatus">FIDO
    *     Metadata Service §3.1.4. AuthenticatorStatus enum</a>

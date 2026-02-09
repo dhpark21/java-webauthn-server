@@ -14,7 +14,7 @@ New features:
 
 Fixes:
 
-* Added `@since` tags to `FidoMetadataService` javadoc.
+* Added `@since` tags to `AuthenticatorStatus` and `FidoMetadataService` javadoc.
 
 
 == Version 2.8.1 ==

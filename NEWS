@@ -1,3 +1,22 @@
+== Version 2.9.0 (unreleased) ==
+
+`webauthn-server-core`:
+
+Fixes:
+
+* Added `@since` tags to `AttestationTrustSource` javadoc.
+
+`webauthn-server-attestation`:
+
+New features:
+
+* Added `AuthenticatorStatus.RETIRED` and `Filters.notRetired()`.
+
+Fixes:
+
+* Added `@since` tags to `AuthenticatorStatus` and `FidoMetadataService` javadoc.
+
+
 == Version 2.8.1 ==
 
 Fixes:

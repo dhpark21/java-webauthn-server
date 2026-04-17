@@ -123,6 +123,12 @@ public final class FidoMetadataDownloader {
   private final KeyStore httpsTrustStore;
   private final boolean verifyDownloadsOnly;
 
+  /** For overriding JSON mapper settings in tests. */
+  private final Supplier<ObjectMapper> makeHeaderJsonMapper;
+
+  /** For overriding JSON mapper settings in tests. */
+  private final Supplier<ObjectMapper> makePayloadJsonMapper;
+
   /**
    * Begin configuring a {@link FidoMetadataDownloader} instance. See the {@link
    * FidoMetadataDownloaderBuilder.Step1 Step1} type.
@@ -153,6 +159,11 @@ public final class FidoMetadataDownloader {
     private KeyStore httpsTrustStore = null;
     private boolean verifyDownloadsOnly = false;
 
+    private Supplier<ObjectMapper> makeHeaderJsonMapper =
+        FidoMetadataDownloader::defaultHeaderJsonMapper;
+    private Supplier<ObjectMapper> makePayloadJsonMapper =
+        FidoMetadataDownloader::defaultPayloadJsonMapper;
+
     public FidoMetadataDownloader build() {
       return new FidoMetadataDownloader(
           expectedLegalHeaders,
@@ -170,7 +181,9 @@ public final class FidoMetadataDownloader {
           certStore,
           clock,
           httpsTrustStore,
-          verifyDownloadsOnly);
+          verifyDownloadsOnly,
+          makeHeaderJsonMapper,
+          makePayloadJsonMapper);
     }
 
     /**
@@ -634,6 +647,20 @@ public final class FidoMetadataDownloader {
      */
     public FidoMetadataDownloaderBuilder verifyDownloadsOnly(final boolean verifyDownloadsOnly) {
       this.verifyDownloadsOnly = verifyDownloadsOnly;
+      return this;
+    }
+
+    /** For internal testing use only. */
+    FidoMetadataDownloaderBuilder headerJsonMapper(
+        final Supplier<ObjectMapper> makeHeaderJsonMapper) {
+      this.makeHeaderJsonMapper = makeHeaderJsonMapper;
+      return this;
+    }
+
+    /** For internal testing use only. */
+    FidoMetadataDownloaderBuilder payloadJsonMapper(
+        final Supplier<ObjectMapper> makePayloadJsonMapper) {
+      this.makePayloadJsonMapper = makePayloadJsonMapper;
       return this;
     }
   }
@@ -1145,23 +1172,32 @@ public final class FidoMetadataDownloader {
     return parseResult.blob;
   }
 
-  static ParseResult parseBlob(ByteArray jwt) throws IOException, Base64UrlException {
+  ParseResult parseBlob(ByteArray jwt) throws IOException, Base64UrlException {
     Scanner s = new Scanner(new ByteArrayInputStream(jwt.getBytes())).useDelimiter("\\.");
     final ByteArray jwtHeader = ByteArray.fromBase64Url(s.next());
     final ByteArray jwtPayload = ByteArray.fromBase64Url(s.next());
     final ByteArray jwtSignature = ByteArray.fromBase64Url(s.next());
 
     final ObjectMapper headerJsonMapper =
-        JacksonCodecs.json().setBase64Variant(Base64Variants.MIME_NO_LINEFEEDS);
+        makeHeaderJsonMapper.get().setBase64Variant(Base64Variants.MIME_NO_LINEFEEDS);
 
     return new ParseResult(
         new MetadataBLOB(
             headerJsonMapper.readValue(jwtHeader.getBytes(), MetadataBLOBHeader.class),
-            JacksonCodecs.jsonWithDefaultEnums()
+            makePayloadJsonMapper
+                .get()
                 .readValue(jwtPayload.getBytes(), MetadataBLOBPayload.class)),
         jwtHeader,
         jwtPayload,
         jwtSignature);
+  }
+
+  static ObjectMapper defaultHeaderJsonMapper() {
+    return JacksonCodecs.json();
+  }
+
+  static ObjectMapper defaultPayloadJsonMapper() {
+    return JacksonCodecs.jsonWithDefaultEnums();
   }
 
   private static ByteArray readAll(InputStream is) throws IOException {

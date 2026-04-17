@@ -1,5 +1,6 @@
 package com.yubico.fido.metadata
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.yubico.fido.metadata.TestCaches.cachedDefaultSettingsDownloader
 import com.yubico.internal.util.CertificateParser
 import com.yubico.webauthn.data.ByteArray
@@ -46,7 +47,7 @@ class FidoMetadataDownloaderIntegrationTest
           downloader
             .fetchHeaderCertChain(
               trustRootCert,
-              FidoMetadataDownloader
+              downloader
                 .parseBlob(TestCaches.getBlobCache.get.get)
                 .getBlob
                 .getHeader,
@@ -62,6 +63,31 @@ class FidoMetadataDownloaderIntegrationTest
             .isAnyDistributionPointUnsupported should be(false)
         }
       }
+    }
+  }
+
+  describe("FidoMetadataDownloader with strict JSON deserialization settings") {
+    val downloader = cachedDefaultSettingsDownloader
+      .headerJsonMapper(() =>
+        com.yubico.internal.util.JacksonCodecs
+          .json()
+          .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+      )
+      .payloadJsonMapper(() =>
+        com.yubico.internal.util.JacksonCodecs
+          .json()
+          .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+          .configure(
+            DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE,
+            false,
+          )
+      )
+      .build()
+
+    it("downloads and parses the BLOB successfully.") {
+      val blob = Try(TestCaches.cacheSynchronized(downloader.loadCachedBlob))
+      blob shouldBe a[Success[_]]
+      blob.get should not be null
     }
   }
 

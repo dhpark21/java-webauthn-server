@@ -129,7 +129,17 @@ public enum AttachmentHint {
    *     href="https://fidoalliance.org/specs/common-specs/fido-registry-v2.2-rd-20210525.html#authenticator-attachment-hints">FIDO
    *     Registry of Predefined Values §3.4 Authenticator Attachment Hints</a>
    */
-  ATTACHMENT_HINT_WIFI_DIRECT(0x0100, "wifi_direct");
+  ATTACHMENT_HINT_WIFI_DIRECT(0x0100, "wifi_direct"),
+
+  /**
+   * This flag MAY be set to indicate that the authenticator communicates with the FIDO User Device
+   * as a smart card.
+   *
+   * @see <a
+   *     href="https://fidoalliance.org/specs/common-specs/fido-registry-v2.2-rd-20210525.html#authenticator-attachment-hints">FIDO
+   *     Registry of Predefined Values §3.4 Authenticator Attachment Hints</a>
+   */
+  ATTACHMENT_HINT_SMART_CARD(0x0200, "smart-card");
 
   private final int value;
 

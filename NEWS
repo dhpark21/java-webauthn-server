@@ -11,6 +11,10 @@ Fixes:
 New features:
 
 * Added `AuthenticatorStatus.RETIRED` and `Filters.notRetired()`.
+* Added `AttachmentHint.ATTACHMENT_HINT_SMART_CARD`.
+ ** Thanks to GitHub users mmoayyed and ErlendNukke for the contribution, see
+    https://github.com/Yubico/java-webauthn-server/pull/468 and
+    https://github.com/Yubico/java-webauthn-server/pull/467
 
 Fixes:
 

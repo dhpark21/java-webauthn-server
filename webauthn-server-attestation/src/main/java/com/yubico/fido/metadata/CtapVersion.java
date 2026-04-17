@@ -1,5 +1,7 @@
 package com.yubico.fido.metadata;
 
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
+
 /**
  * Enumeration of CTAP versions.
  *
@@ -8,6 +10,14 @@ package com.yubico.fido.metadata;
  *     to Authenticator Protocol (CTAP) §6.4. authenticatorGetInfo (0x04)</a>
  */
 public enum CtapVersion {
+
+  /**
+   * (NOT DEFINED IN SPEC) Placeholder for any unknown {@link CtapVersion} value.
+   *
+   * @since 2.9.0
+   */
+  @JsonEnumDefaultValue
+  UNKNOWN,
 
   /**
    * @see <a

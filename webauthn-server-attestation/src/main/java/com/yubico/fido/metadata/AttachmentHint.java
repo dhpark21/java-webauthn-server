@@ -1,5 +1,6 @@
 package com.yubico.fido.metadata;
 
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -21,6 +22,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  *     Registry of Predefined Values §3.4 Authenticator Attachment Hints</a>
  */
 public enum AttachmentHint {
+
+  /**
+   * (NOT DEFINED IN SPEC) Placeholder for any unknown {@link AttachmentHint} value.
+   *
+   * @since 2.9.0
+   */
+  @JsonEnumDefaultValue
+  UNKNOWN(0, "UNKNOWN"),
 
   /**
    * This flag MAY be set to indicate that the authenticator is permanently attached to the FIDO

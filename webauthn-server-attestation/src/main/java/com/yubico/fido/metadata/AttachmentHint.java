@@ -132,10 +132,11 @@ public enum AttachmentHint {
   ATTACHMENT_HINT_WIFI_DIRECT(0x0100, "wifi_direct"),
 
   /**
-   * This flag MAY be set to indicate that an external authenticator is able to communicate
-   * by ISO7816 messages with the FIDO User Device. As part of authenticator metadata,
-   * or when reporting characteristics through discovery, if this flag is set, the {@link #ATTACHMENT_HINT_WIRED}
-   * flag SHOULD also be set.
+   * This flag MAY be set to indicate that an external authenticator is able to communicate by
+   * ISO7816 messages with the FIDO User Device. As part of authenticator metadata, or when
+   * reporting characteristics through discovery, if this flag is set, the {@link
+   * #ATTACHMENT_HINT_WIRED} flag SHOULD also be set.
+   *
    * @see <a
    *     href="https://fidoalliance.org/specs/common-specs/fido-registry-v2.3-rd-20260105.html#authenticator-attachment-hints">FIDO
    *     Registry of Predefined Values §3.4 Authenticator Attachment Hints</a>

@@ -25,6 +25,17 @@ New features:
  ** ProtocolFamily`
  ** PublicKeyRepresentationFormat`
  ** TransactionConfirmationDisplayType`
+* Added enum constant `CtapVersion.FIDO_2_3`.
+* Added missing fields to FIDO MDS data model:
+ ** `AuthenticatorGetInfo`: `attestationFormats`, `longTouchForReset`,
+    `uvCountSinceLastPinEntry`, `transportsForReset`, `pinComplexityPolicy`,
+    `pinComplexityPolicyURL`, `maxPINLength`, `authenticatorConfigCommands`
+ ** `BiometricAccuracyDescriptor`: `iAPARThreshold`
+ ** `MetadataStatement`: `friendlyNames`, `iconDark`, `providerLogoLight`,
+    `providerLogoDark`, `keyScope`, `multiDeviceCredentialSupport`,
+    `cxpConfigURL`
+ ** `StatusReport`: `certificationProfiles`, `sunsetDate`, `fipsRevision`,
+    `fipsPhysicalSecurityLevel`
 
 Fixes:
 

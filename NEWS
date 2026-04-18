@@ -20,11 +20,11 @@ New features:
  ** `AuthenticationAlgorithm`
  ** `AuthenticatorAttestationType`
  ** `CtapCertificationId`
- ** CtapPinUvAuthProtocolVersion`
- ** CtapVersion`
- ** ProtocolFamily`
- ** PublicKeyRepresentationFormat`
- ** TransactionConfirmationDisplayType`
+ ** `CtapPinUvAuthProtocolVersion`
+ ** `CtapVersion`
+ ** `ProtocolFamily`
+ ** `PublicKeyRepresentationFormat`
+ ** `TransactionConfirmationDisplayType`
 * Added enum constant `CtapVersion.FIDO_2_3`.
 * Added missing fields to FIDO MDS data model:
  ** `AuthenticatorGetInfo`: `attestationFormats`, `longTouchForReset`,

@@ -2,25 +2,27 @@ package com.yubico.fido.metadata
 
 import com.yubico.webauthn.data.ByteArray
 
-import java.util.Optional
-import java.util.function.Consumer
-import java.util.function.Supplier
-import scala.jdk.OptionConverters.RichOption
+import java.nio.file.Path
+import scala.jdk.OptionConverters.RichOptional
 
 object TestCaches {
 
   // Cache downloaded items to avoid unnecessary load on remote servers, and so tests don't have to wait for rate limiting
 
-  private var trustRootCache: Option[ByteArray] = None
-  val getTrustRootCache: Supplier[Optional[ByteArray]] = () =>
-    trustRootCache.toJava
-  val setTrustRootCache: Consumer[ByteArray] = trustRoot => {
-    trustRootCache = Some(trustRoot)
-  }
+  private val trustRootCacheFile = Path
+    .of(sys.env.getOrElse("FIDO_MDS_CACHE_DIR", "."), "trust-root-cache.bin")
+    .toFile
+  private val blobCacheFile = Path
+    .of(sys.env.getOrElse("FIDO_MDS_CACHE_DIR", "."), "blob-cache.bin")
+    .toFile
 
-  private var blobCache: Option[ByteArray] = None
-  val getBlobCache: Supplier[Optional[ByteArray]] = () => blobCache.toJava
-  val setBlobCache: Consumer[ByteArray] = blob => { blobCache = Some(blob) }
+  def trustRootCache: Option[ByteArray] =
+    cachedDefaultSettingsDownloader
+      .build()
+      .readCacheFile(trustRootCacheFile)
+      .toScala
+  def blobCache: Option[ByteArray] =
+    cachedDefaultSettingsDownloader.build().readCacheFile(blobCacheFile).toScala
 
   def cachedDefaultSettingsDownloader
       : FidoMetadataDownloader.FidoMetadataDownloaderBuilder =
@@ -30,9 +32,9 @@ object TestCaches {
         "Retrieval and use of this BLOB indicates acceptance of the appropriate agreement located at https://fidoalliance.org/metadata/metadata-legal-terms/"
       )
       .useDefaultTrustRoot()
-      .useTrustRootCache(getTrustRootCache, setTrustRootCache)
+      .useTrustRootCacheFile(trustRootCacheFile)
       .useDefaultBlob()
-      .useBlobCache(getBlobCache, setBlobCache)
+      .useBlobCacheFile(blobCacheFile)
 
   /** Evaluate <code>expr</code> with an exclusive lock on the test cache. */
   def cacheSynchronized[A](expr: => A): A = {

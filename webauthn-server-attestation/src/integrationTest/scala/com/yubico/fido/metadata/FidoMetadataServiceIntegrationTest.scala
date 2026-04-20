@@ -45,7 +45,14 @@ class FidoMetadataServiceIntegrationTest
         Try(
           FidoMetadataService
             .builder()
-            .useBlob(TestCaches.cacheSynchronized(downloader.loadCachedBlob()))
+            .useBlob(
+              TestCaches.cacheSynchronized(
+                // Since the integration tests cache downloads to file:
+                // Use refreshBlob() here to always exercise the HTTP part of the downloader,
+                // and loadCachedBlob() elsewhere to not cause unnecessary server load.
+                downloader.refreshBlob()
+              )
+            )
             .build()
         )
 

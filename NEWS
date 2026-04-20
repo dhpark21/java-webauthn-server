@@ -12,7 +12,7 @@ New features:
 
 * Added `AuthenticatorStatus.RETIRED` and `Filters.notRetired()`.
 * Added `AttachmentHint.ATTACHMENT_HINT_SMART_CARD`.
- ** Thanks to GitHub users mmoayyed and ErlendNukke for the contribution, see
+ ** Thanks to Misagh Moayyed and Erlend Nukke for the contribution, see
     https://github.com/Yubico/java-webauthn-server/pull/468 and
     https://github.com/Yubico/java-webauthn-server/pull/467
 * Added `UNKNOWN` constant to all enums in `com.yubico.fido.metadata`:

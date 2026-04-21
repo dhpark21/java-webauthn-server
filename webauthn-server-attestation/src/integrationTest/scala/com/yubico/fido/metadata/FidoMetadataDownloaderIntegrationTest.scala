@@ -40,15 +40,16 @@ class FidoMetadataDownloaderIntegrationTest
       blob shouldBe a[Success[_]]
       val trustRootCert =
         CertificateParser.parseDer(
-          TestCaches.getTrustRootCache.get.get.getBytes
+          TestCaches.trustRootCache.get.getBytes
         )
+
       val certChain = TestCaches
         .cacheSynchronized(
           downloader
             .fetchHeaderCertChain(
               trustRootCert,
               downloader
-                .parseBlob(TestCaches.getBlobCache.get.get)
+                .parseBlob(TestCaches.blobCache.get)
                 .getBlob
                 .getHeader,
             )

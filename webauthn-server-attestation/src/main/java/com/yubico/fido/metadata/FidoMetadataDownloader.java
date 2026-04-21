@@ -1048,7 +1048,7 @@ public final class FidoMetadataDownloader {
         });
   }
 
-  private Optional<ByteArray> readCacheFile(File cacheFile) throws IOException {
+  Optional<ByteArray> readCacheFile(File cacheFile) throws IOException {
     if (cacheFile.exists() && cacheFile.canRead() && cacheFile.isFile()) {
       try (FileInputStream f = new FileInputStream(cacheFile)) {
         return Optional.of(readAll(f));

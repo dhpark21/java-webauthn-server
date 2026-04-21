@@ -876,7 +876,10 @@ public final class FidoMetadataDownloader {
 
     try {
       log.debug("Attempting to download new BLOB...");
-      final ByteArray downloadedBytes = download(blobUrl);
+      final ByteArray downloadedBytes =
+          download(
+              blobUrl,
+              cached.map(cachedBlob -> String.format("%d", cachedBlob.getPayload().getNo())));
       final MetadataBLOB downloadedBlob = parseAndVerifyBlob(downloadedBytes, trustRoot);
       log.debug("New BLOB downloaded.");
 
@@ -906,6 +909,11 @@ public final class FidoMetadataDownloader {
       }
 
       return Optional.of(downloadedBlob);
+
+    } catch (NotModified e) {
+      log.debug("Remote BLOB not modified - using cached BLOB.");
+      return cached;
+
     } catch (FidoMetadataDownloaderException e) {
       if (e.getReason() == Reason.BAD_SIGNATURE && cached.isPresent()) {
         log.warn("New BLOB has bad signature - falling back to cached BLOB.");
@@ -1062,6 +1070,17 @@ public final class FidoMetadataDownloader {
   }
 
   private ByteArray download(URL url) throws IOException {
+    try {
+      return download(url, Optional.empty());
+    } catch (NotModified e) {
+      final String msg =
+          "NotModified thrown by download(URL, Optional.empty()). This should be impossible, please file a bug report.";
+      log.error(msg);
+      throw new RuntimeException(msg, e);
+    }
+  }
+
+  private ByteArray download(URL url, Optional<String> etag) throws IOException, NotModified {
     URLConnection conn = url.openConnection();
 
     if (conn instanceof HttpsURLConnection) {
@@ -1082,6 +1101,38 @@ public final class FidoMetadataDownloader {
         }
       }
       httpsConn.setRequestMethod("GET");
+      etag.ifPresent(
+          et -> {
+            httpsConn.addRequestProperty("If-None-Match", String.format("\"%s\"", et));
+          });
+
+      if (httpsConn.getResponseCode() != HttpsURLConnection.HTTP_OK) {
+        switch (httpsConn.getResponseCode()) {
+          case 304: // Not Modified
+            log.debug("Received 304 Not Modified response to download request: {}", url);
+            throw new NotModified();
+        }
+
+        log.warn(
+            "Received non-200 status: {} to download request: {}",
+            httpsConn.getResponseCode(),
+            url);
+
+        final String responseEtag = httpsConn.getHeaderField("ETag");
+        if (responseEtag != null) {
+          log.debug("Response ETag: {}", responseEtag);
+          if (etag.map(
+                  et ->
+                      // ETag header value should be wrapped with double quotes (`etag: "243"`), but
+                      // FIDO MDS returns it like: `etag: 243`. Try both in case that changes in the
+                      // future.
+                      et.equals(responseEtag) || String.format("\"%s\"", et).equals(responseEtag))
+              .orElseGet(() -> false)) {
+            log.debug("Response ETag matches local ETag - interpreting as not modified.");
+            throw new NotModified();
+          }
+        }
+      }
     }
 
     return readAll(conn.getInputStream());
@@ -1321,4 +1372,6 @@ public final class FidoMetadataDownloader {
           CertStore.getInstance("Collection", new CollectionCertStoreParameters(crldpCrls)));
     }
   }
+
+  private static class NotModified extends Throwable {}
 }

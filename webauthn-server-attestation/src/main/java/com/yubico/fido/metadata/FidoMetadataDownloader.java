@@ -879,6 +879,10 @@ public final class FidoMetadataDownloader {
       final ByteArray downloadedBytes =
           download(
               blobUrl,
+              // This should ideally use the value of the ETag response header from when the cached
+              // BLOB was downloaded, but we don't have anywhere to store that without changing the
+              // format of the cache serialization. This is good enough as the MDS explicitly
+              // specifies that the ETag is set to the "no" of the BLOB.
               cached.map(cachedBlob -> String.format("%d", cachedBlob.getPayload().getNo())));
       final MetadataBLOB downloadedBlob = parseAndVerifyBlob(downloadedBytes, trustRoot);
       log.debug("New BLOB downloaded.");

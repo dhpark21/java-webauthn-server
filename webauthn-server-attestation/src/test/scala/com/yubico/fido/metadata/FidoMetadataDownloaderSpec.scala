@@ -2385,7 +2385,7 @@ class FidoMetadataDownloaderSpec
           blob should not be null
           if (requestRan) {
             blob.getNo should equal(newBlobNo)
-            requestSucceeded should be (true)
+            requestSucceeded should be(true)
           } else {
             blob.getNo should equal(oldBlobNo)
           }

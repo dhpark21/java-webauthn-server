@@ -36,6 +36,13 @@ New features:
     `cxpConfigURL`
  ** `StatusReport`: `certificationProfiles`, `sunsetDate`, `fipsRevision`,
     `fipsPhysicalSecurityLevel`
+* `FidoMetadataDownloader` now sends the `If-None-Match` request header set to
+  the `"no"` of the cached BLOB, if any, and handles `304 Not Modified`
+  responses appropriately.
+* In `FidoMetadataDownloader` if a BLOB download request returns an HTTP failure
+  status, but returns an `ETag` response header matching the `"no"` of the
+  cached BLOB, if any, this is now interpreted like a successful `304 Not
+  Modified` response.
 
 Fixes:
 
